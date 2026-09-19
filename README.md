@@ -10,6 +10,12 @@
   ⎿  Jev reports: task done.
 ```
 
+<p align="center">
+  <img src="docs/images/windows.png" alt="JevPilot on Windows" width="68%">
+  &nbsp;
+  <img src="docs/images/android.jpg" alt="JevPilot on Android" width="24%">
+</p>
+
 ## Downloads
 Get these from the **[latest release](../../releases/latest)**:
 

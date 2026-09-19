@@ -1,5 +1,7 @@
 # Android app
 
+<img src="images/android.jpg" alt="JevPilot on Android" width="280">
+
 The app has two tabs:
 - **Control PC** sends tasks to JevPilot on your PC and shows its log live.
 - **Control phone** lets Jev operate the phone itself.

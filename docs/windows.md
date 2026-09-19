@@ -1,5 +1,7 @@
 # Windows app
 
+<img src="images/windows.png" alt="JevPilot on Windows" width="700">
+
 ## Install
 1. Download `JevPilot-Windows.zip` from the [releases](../../../releases/latest) and unzip it.
 2. Right-click `install.ps1` → **Run with PowerShell**.
