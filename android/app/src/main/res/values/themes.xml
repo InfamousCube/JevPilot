@@ -1,0 +1,16 @@
+<resources>
+    <style name="JevTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#262624</item>
+        <item name="android:statusBarColor">#1F1E1D</item>
+        <item name="android:navigationBarColor">#262624</item>
+        <item name="android:colorAccent">#D97757</item>
+        <item name="android:colorPrimary">#D97757</item>
+        <item name="android:textColorPrimary">#FAF9F5</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+    <style name="JevDialog" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">#D97757</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackground">#30302E</item>
+    </style>
+</resources>

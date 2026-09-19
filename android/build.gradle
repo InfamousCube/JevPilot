@@ -1,0 +1,12 @@
+buildscript {
+    repositories { google(); mavenCentral() }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.12.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20"
+    }
+}
+
+// Keep build output out of OneDrive.
+allprojects {
+    layout.buildDirectory = new File(System.getenv("TEMP") ?: "build", "JevPilotMobile-build/" + project.name)
+}

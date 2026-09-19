@@ -1,0 +1,7 @@
+customtkinter
+keyboard
+playwright
+uiautomation
+requests
+pillow
+pyinstaller

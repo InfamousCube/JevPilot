@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+
+# Local secrets / settings never belong in the repo
+config.json
+*.jks
+*.keystore
+android-release.properties
+
+# Android
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+.idea/
+*.iml
+
+# .NET
+ROUNDS-Bridge/JevBridge/bin/
+ROUNDS-Bridge/JevBridge/obj/
+
+# Decompiled game code and game artwork are copyrighted: never publish
+ROUNDS-Bridge/decomp/
+games/*.jpg
+games/*.png
+games/*.webp
+games/README.txt
+
+# Local tool caches
+.impeccable/

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JevPilot</string>
+    <string name="a11y_description">Lässt TypeSafe Jev dieses Handy bedienen: JevPilot liest den Bildschirminhalt und tippt, scrollt und schreibt für dich – nur während du eine Aufgabe in JevPilot gestartet hast. Stoppen jederzeit über die orange Leiste oben.</string>
+</resources>
