@@ -55,4 +55,4 @@ Text for typing comes from your prompt.
 Every game is an adapter: a `.py` file in the `games` folder. To add a game, click **Copy prompt** in the library, paste the prompt into Claude Code or Codex and fill in the game name. See [Games](docs/games.md).
 
 ## License
-[MIT](LICENSE). This is an unofficial hobby project. It isn't affiliated with TypeSafe, Landfall (ROUNDS) or Valve.
+[MIT](LICENSE). Third-party licenses: [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md). This is an unofficial hobby project. It isn't affiliated with TypeSafe, Landfall (ROUNDS) or Valve.
