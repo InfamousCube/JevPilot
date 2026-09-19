@@ -315,7 +315,7 @@ class JevAccessibilityService : AccessibilityService() {
                 elevation = dp(10).toFloat()
             }
             box.addView(TextView(this).apply {
-                text = "✻ JevPilot – Bestätigung"; setTextColor(Pal.ACCENT); textSize = 13f
+                text = "✻ JevPilot – Confirm"; setTextColor(Pal.ACCENT); textSize = 13f
             })
             box.addView(TextView(this).apply {
                 text = question; setTextColor(Pal.TEXT); textSize = 15f; setPadding(0, dp(8), 0, dp(12))
@@ -331,9 +331,9 @@ class JevAccessibilityService : AccessibilityService() {
                 }
                 setOnClickListener { answer = yes; latch.countDown() }
             }
-            row.addView(btn("Ablehnen", false, false))
+            row.addView(btn("Deny", false, false))
             row.addView(View(this), LinearLayout.LayoutParams(dp(10), 1))
-            row.addView(btn("Erlauben", true, true))
+            row.addView(btn("Allow", true, true))
             box.addView(row)
             val params = overlayParams(Gravity.CENTER).apply {
                 width = (resources.displayMetrics.widthPixels * 0.88).toInt()

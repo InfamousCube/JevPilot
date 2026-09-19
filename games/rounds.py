@@ -79,7 +79,7 @@ def _side(dx: float, dy: float) -> str:
 
 class Adapter(GameAdapter):
     name = "ROUNDS"
-    description = "1v1 physics shooter – Jev bewegt, zielt, blockt und wählt Karten"
+    description = "1v1 physics shooter – Jev moves, aims, blocks and picks cards"
     image = "rounds.jpg"
 
     def __init__(self):
@@ -105,29 +105,29 @@ class Adapter(GameAdapter):
                                  capture_output=True, text=True,
                                  creationflags=subprocess.CREATE_NO_WINDOW).stdout
         if "ROUNDS.exe" in running:
-            log("ROUNDS läuft, aber ohne JevBridge. Schließ ROUNDS einmal und starte es neu – "
-                "ich warte hier.", "warn")
+            log("ROUNDS is running without JevBridge. Close ROUNDS and start it again – "
+                "waiting here.", "warn")
         else:
-            log("Starte ROUNDS …", "meta")
+            log("Starting ROUNDS …", "meta")
             try:
                 os.startfile(STEAM_URL)
             except OSError:
                 if not GAME_EXE:
-                    raise RuntimeError("ROUNDS nicht gefunden – ist es über Steam installiert?")
+                    raise RuntimeError("ROUNDS not found – is it installed through Steam?")
                 subprocess.Popen([GAME_EXE], cwd=os.path.dirname(GAME_EXE))
         deadline = time.monotonic() + 180
         while time.monotonic() < deadline and not stop.is_set():
             time.sleep(2)
             if self._try_connect():
                 return
-        raise RuntimeError("ROUNDS gestartet, aber JevBridge antwortet nicht.")
+        raise RuntimeError("ROUNDS started, but JevBridge does not answer.")
 
     def _cmd(self, line: str) -> dict:
         with self.io_lock:
             self.sock.sendall((line + "\n").encode())
             reply = self.reader.readline()
         if not reply:
-            raise RuntimeError("Verbindung zu ROUNDS getrennt.")
+            raise RuntimeError("Connection to ROUNDS lost.")
         return json.loads(reply)
 
     # ------------------------------------------------------------ main loop
@@ -135,13 +135,13 @@ class Adapter(GameAdapter):
         m = re.search(r"(?:spieler|player|p)\s*(\d)", prompt, re.I)
         fixed_id = int(m.group(1)) - 1 if m else None
         self._connect(log, stop)
-        log("ROUNDS verbunden. Stop: Ctrl+Alt+X", "ok")
+        log("ROUNDS connected. Stop: Ctrl+Alt+X", "ok")
         if fixed_id is None:
-            log("Lobby: Lokal → Versus → Leertaste (du) → B (Bot = Jev). "
-                "Jev übernimmt den Bot.", "meta")
+            log("Lobby: Local → Versus → Space (you) → B (bot = Jev). "
+                "Jev takes over the bot.", "meta")
         else:
             self._cmd(f"CONTROL {fixed_id}")
-            log(f"Jev steuert Spieler {fixed_id + 1}.", "meta")
+            log(f"Jev controls player {fixed_id + 1}.", "meta")
         controlling = fixed_id
 
         pool = ThreadPoolExecutor(max_workers=3)
@@ -159,7 +159,7 @@ class Adapter(GameAdapter):
                 q, ctx = self._fight_questions(state, prompt)
                 answers, dt = jev.ask(ctx, q)
             except Exception as e:  # noqa: BLE001 - one failed call must not stop the match
-                log(f"  Jev-Fehler: {e}", "err")
+                log(f"  Jev error: {e}", "err")
                 return
             if my_seq <= applied_seq[0]:
                 return  # a newer answer already landed
@@ -180,7 +180,7 @@ class Adapter(GameAdapter):
                 state = self._cmd("STATE")
                 if not state.get("offline"):
                     if not warned_online:
-                        log("Online-Spiel erkannt – JevBridge greift nur in lokalen Spielen ein.",
+                        log("Online game detected – JevBridge only acts in local games.",
                             "warn")
                         warned_online = True
                     time.sleep(0.5)
@@ -195,11 +195,11 @@ class Adapter(GameAdapter):
                     if want is not None and (want != controlling or state.get("controlled") != want):
                         self._cmd(f"CONTROL {want}")
                         if want != controlling:
-                            log(f"Jev übernimmt den Bot (Spieler {want + 1}).", "ok")
+                            log(f"Jev takes over the bot (player {want + 1}).", "ok")
                         controlling = want
                     if want is None:
                         if controlling is not None or now - last_log >= 10:
-                            log("Warte auf Bot – drück B in der Lobby.", "meta")
+                            log("Waiting for a bot – press B in the lobby.", "meta")
                             last_log = now
                         controlling = None
                         time.sleep(0.3)
@@ -225,9 +225,9 @@ class Adapter(GameAdapter):
                         last_send = now
                     if now - last_log >= 1.5 and stats["n"]:
                         log(f"  {MOVE_OPTS[decision['move']].lower()}"
-                            f"{', schießt' if decision['shoot'] else ''}"
-                            f"{', Block scharf' if decision['arm'] else ''}"
-                            f"  ·  {stats['n']} Entscheidungen, Ø {stats['ms'] / stats['n']:.0f} ms",
+                            f"{', shooting' if decision['shoot'] else ''}"
+                            f"{', block armed' if decision['arm'] else ''}"
+                            f"  ·  {stats['n']} decisions, avg {stats['ms'] / stats['n']:.0f} ms",
                             "meta")
                         stats.update(n=0, ms=0.0)
                         last_log = now
@@ -241,7 +241,7 @@ class Adapter(GameAdapter):
                 self.sock.close()
             except OSError:
                 pass
-            log("ROUNDS: Steuerung zurückgegeben.", "warn")
+            log("ROUNDS: control handed back.", "warn")
 
     # ------------------------------------------------------------ fighting
     @staticmethod
@@ -346,7 +346,7 @@ class Adapter(GameAdapter):
         key = answers["card"]["choice"]
         idx = int(key[1:])
         prob = answers["card"]["probabilities"].get(key, 0)
-        log(f"Karte gewählt: {cards[idx]['name']}  (p={prob:.2f}, {dt * 1000:.0f} ms)", "act")
+        log(f"Card picked: {cards[idx]['name']}  (p={prob:.2f}, {dt * 1000:.0f} ms)", "act")
         r = self._cmd(f"PICK {idx}")
         if "error" in r:
-            log(f"  Pick fehlgeschlagen: {r['error']}", "err")
+            log(f"  Pick failed: {r['error']}", "err")

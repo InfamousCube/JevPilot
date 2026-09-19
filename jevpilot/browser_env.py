@@ -120,7 +120,7 @@ class BrowserEnv(Environment):
             except Exception as e:  # noqa: BLE001 - try the next installed browser
                 last = e
         if self.ctx is None:
-            raise RuntimeError(f"Kein Browser startbar (Edge/Chrome): {last}")
+            raise RuntimeError(f"Could not start a browser (Edge/Chrome): {last}")
         self.ctx.on("page", self._on_page)
         self.page = self.ctx.pages[0] if self.ctx.pages else self.ctx.new_page()
 

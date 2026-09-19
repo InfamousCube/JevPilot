@@ -1,52 +1,52 @@
 # ✻ JevPilot
 
-**Computer Use mit [TypeSafe](https://typesafe.ai) Jev.** Du schreibst eine Aufgabe, und Jev bedient deinen PC, den Browser, Spiele und dein Android-Handy.
+**Computer use with [TypeSafe](https://typesafe.ai) Jev.** Describe a task, and Jev operates your PC, your browser, your games and your Android phone.
 
 ```
-› öffne youtube und suche "lofi hip hop"
+› open youtube and search "lofi hip hop"
 ⏺ [1] Open the website youtube.com
 ⏺ [2] Type "lofi hip hop" into the field 'Search'
 ⏺ [3] Press Enter
-  ⎿  Jev meldet: Aufgabe erledigt.
+  ⎿  Jev reports: task done.
 ```
 
 ## Downloads
-In den **[Releases](../../releases/latest)**:
+Get these from the **[latest release](../../releases/latest)**:
 
-| Datei | Wofür |
+| File | What it is |
 |---|---|
-| `JevPilot-Windows.zip` | Windows-App mit Installer |
-| `JevPilot-Android.apk` | Android-App: PC fernsteuern und das Handy bedienen lassen |
-| `JevBridge.dll` | Mod für das Spiel ROUNDS (optional) |
+| `JevPilot-Windows.zip` | Windows app with installer |
+| `JevPilot-Android.apk` | Android app: remote-control the PC and let Jev operate the phone |
+| `JevBridge.dll` | Mod for the game ROUNDS (optional) |
 
-> Du brauchst einen **eigenen TypeSafe API-Key**. Beim ersten Start fragt jede App danach. Der Key bleibt lokal auf deinem Gerät.
+> You need **your own TypeSafe API key**. Each app asks for it on first start and keeps it on your device.
 
-## Schnellstart
-1. **Windows:** ZIP entpacken → `install.ps1` mit Rechtsklick → **Mit PowerShell ausführen** → **JevPilot** in der Windows-Suche öffnen → API-Key einfügen.
-2. **Android (optional):** APK installieren → API-Key einfügen. Unter ⚙ PC-Adresse und Kopplungscode eintragen. Beides steht am PC unter ⚙ Einstellungen.
-3. Prompt schreiben → **Start**. Stoppen kannst du jederzeit: am PC mit `Ctrl+Alt+X`, am Handy durch Antippen der orangen Leiste.
+## Quick start
+1. **Windows:** unzip the file → right-click `install.ps1` → **Run with PowerShell** → open **JevPilot** from Windows search → paste your API key.
+2. **Android (optional):** install the APK → paste your API key. Under ⚙, enter the PC address and pairing code. You find both on the PC under ⚙ Settings.
+3. Type a prompt → **Start**. To stop, press `Ctrl+Alt+X` on the PC, or tap the orange bar on the phone.
 
-## Anleitungen
+## Guides
 | | |
 |---|---|
-| 🖥️ [Windows-App](docs/windows.md) | Installieren, Modi, Einstellungen, Deinstallieren |
-| 📱 [Android-App](docs/android.md) | Bedienungshilfe aktivieren, mit dem PC koppeln |
-| 🎮 [Spiele](docs/spiele.md) | Spiele-Bibliothek, neue Spiele mit Claude Code/Codex, eigene Adapter |
-| 🔫 [ROUNDS](docs/rounds.md) | Gegen Jev spielen: Mod installieren, Lobby-Ablauf |
-| 🔒 [Sicherheit](docs/sicherheit.md) | Was an TypeSafe geht, Bestätigungen, Handy-Verbindung |
-| 🛠️ [Selbst bauen](docs/entwickeln.md) | Python, Android, Mod, Release, Projektaufbau |
+| 🖥️ [Windows app](docs/windows.md) | Install, modes, settings, uninstall |
+| 📱 [Android app](docs/android.md) | Accessibility service, pairing with your PC |
+| 🎮 [Games](docs/games.md) | Game library, new games with Claude Code/Codex, writing adapters |
+| 🔫 [ROUNDS](docs/rounds.md) | Play against Jev: installing the mod, lobby steps |
+| 🔒 [Security](docs/security.md) | What goes to TypeSafe, confirmations, phone connection |
+| 🛠️ [Building](docs/building.md) | Python, Android, mod, releases, project layout |
 
-## So funktioniert es
-Jev sieht keine Bilder und schreibt keinen freien Text. Er beantwortet nur Auswahl-, Bewertungs- und Ja/Nein-Fragen. Deshalb läuft jeder Schritt so ab:
-1. JevPilot liest den Bildschirm: die Webseite (DOM), das Windows-Fenster (UI Automation) oder den Handy-Screen (Bedienungshilfe).
-2. Daraus baut es eine Liste aller möglichen Aktionen als englische Sätze.
-3. Jev wählt eine Aktion aus.
-4. JevPilot führt sie aus.
+## How it works
+Jev can't see images and can't write free text. It only answers choice, score and yes/no questions. So JevPilot works step by step:
+1. It reads the screen: the web page (DOM), the Windows window (UI Automation) or the phone screen (accessibility).
+2. It turns that into a list of possible actions, each as an English sentence.
+3. Jev picks one action.
+4. JevPilot carries it out.
 
-Text zum Eintippen nimmt JevPilot aus deinem Prompt.
+Text for typing comes from your prompt.
 
-## Spiele
-Jedes Spiel ist ein Adapter, also eine `.py`-Datei im `games`-Ordner. Für ein neues Spiel klickst du in der Bibliothek auf **Prompt kopieren**, fügst den Prompt in Claude Code oder Codex ein und trägst den Spielnamen ein. Mehr dazu in [Spiele](docs/spiele.md).
+## Games
+Every game is an adapter: a `.py` file in the `games` folder. To add a game, click **Copy prompt** in the library, paste the prompt into Claude Code or Codex and fill in the game name. See [Games](docs/games.md).
 
-## Lizenz
-[MIT](LICENSE). Dies ist ein privates Projekt. Es ist nicht mit TypeSafe, Landfall (ROUNDS) oder Valve verbunden.
+## License
+[MIT](LICENSE). This is an unofficial hobby project. It isn't affiliated with TypeSafe, Landfall (ROUNDS) or Valve.

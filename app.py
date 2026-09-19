@@ -73,7 +73,7 @@ class Worker(threading.Thread):
             except JevError as e:
                 self.ui.log(f"Jev: {e}", "err")
             except Exception as e:  # noqa: BLE001 - keep the worker alive
-                self.ui.log(f"Fehler: {type(e).__name__}: {e}", "err")
+                self.ui.log(f"Error: {type(e).__name__}: {e}", "err")
             finally:
                 self.ui.set_busy(False)
         if self.browser:
@@ -83,7 +83,7 @@ class Worker(threading.Thread):
         jev = Jev(self.ui.cfg.get("api_key", ""))
         if mode == "Auto":
             mode = "Browser" if pick_mode(jev, prompt) == "browser" else "PC"
-            self.ui.log(f"Jev wählt Modus: {mode}", "meta")
+            self.ui.log(f"Jev picked mode: {mode}", "meta")
         if mode == "Browser":
             from jevpilot.browser_env import BrowserEnv
             if self.browser is None:
@@ -102,7 +102,7 @@ class Worker(threading.Thread):
         finally:
             if mode == "PC":
                 self.ui.shrink(False)
-        self.ui.log(f"Tokens bisher: {jev.tokens_in:,}".replace(",", "."), "meta")
+        self.ui.log(f"Tokens so far: {jev.tokens_in:,}", "meta")
 
     def game(self, adapter, prompt: str):
         play(adapter, Jev(self.ui.cfg.get("api_key", "")), prompt, self.stop, self.ui.log)
@@ -136,12 +136,12 @@ class App(ctk.CTk):
         self.after(50, self._dark_titlebar)
         if not self.cfg.get("api_key"):
             self.after(300, self.welcome)
-        self.log("Bereit. Prompt eingeben, Ctrl+Enter startet, Ctrl+Alt+X stoppt überall.", "ok")
+        self.log("Ready. Type a prompt, Ctrl+Enter starts, Ctrl+Alt+X stops everywhere.", "ok")
         if self.remote.start():
-            self.log(f"Handy-App: {lan_ip()}:{PORT} · Kopplungscode {self.cfg['remote_token']}",
+            self.log(f"Phone app: {lan_ip()}:{PORT} · pairing code {self.cfg['remote_token']}",
                      "meta")
         else:
-            self.log(f"Handy-Verbindung aus (Port {PORT} belegt: {self.remote.error})", "warn")
+            self.log(f"Phone connection off (port {PORT} in use: {self.remote.error})", "warn")
 
     # -- layout ------------------------------------------------------------
     def _build(self):
@@ -161,10 +161,10 @@ class App(ctk.CTk):
                      ).pack(side="left", padx=(0, 8))
         ctk.CTkLabel(brand, text="JevPilot", font=("Georgia", 22), text_color=TEXT
                      ).pack(side="left")
-        ctk.CTkLabel(side, text="Computer Use mit TypeSafe Jev", font=("Segoe UI", 11),
+        ctk.CTkLabel(side, text="Computer use with TypeSafe Jev", font=("Segoe UI", 11),
                      text_color=MUTED).pack(anchor="w", padx=20, pady=(2, 0))
 
-        self._section(side, "Modus").pack(anchor="w", padx=20, pady=(24, 6))
+        self._section(side, "Mode").pack(anchor="w", padx=20, pady=(24, 6))
         self.mode = ctk.CTkSegmentedButton(
             side, values=["Auto", "Browser", "PC"], command=lambda _: self.select_game(None),
             fg_color=INPUT, unselected_color=INPUT, unselected_hover_color=LINE,
@@ -173,17 +173,17 @@ class App(ctk.CTk):
         self.mode.set("Auto")
         self.mode.pack(fill="x", padx=16)
 
-        ctk.CTkButton(side, text="⚙  Einstellungen", anchor="w", fg_color="transparent",
+        ctk.CTkButton(side, text="⚙  Settings", anchor="w", fg_color="transparent",
                       hover_color=LINE, text_color=MUTED, font=("Segoe UI", 12),
                       command=self.open_settings).pack(fill="x", padx=12, pady=14, side="bottom")
 
         head = ctk.CTkFrame(side, fg_color="transparent")
         head.pack(fill="x", padx=20, pady=(26, 6))
-        self._section(head, "Spiele").pack(side="left")
+        self._section(head, "Games").pack(side="left")
         ctk.CTkButton(head, text="↻", width=24, height=22, fg_color="transparent",
                       hover_color=LINE, text_color=MUTED, command=self.refresh_games
                       ).pack(side="right")
-        ctk.CTkButton(head, text="Ordner", width=50, height=22, fg_color="transparent",
+        ctk.CTkButton(head, text="Folder", width=50, height=22, fg_color="transparent",
                       hover_color=LINE, text_color=MUTED, font=("Segoe UI", 11),
                       command=lambda: os.startfile(games_dir())).pack(side="right")
         self.games_box = ctk.CTkScrollableFrame(
@@ -215,7 +215,7 @@ class App(ctk.CTk):
 
         foot = ctk.CTkFrame(box, fg_color="transparent")
         foot.grid(row=1, column=0, columnspan=2, sticky="ew", padx=12, pady=(0, 10))
-        self.risky = ctk.CTkSwitch(foot, text="Vor Kaufen/Senden/Löschen fragen",
+        self.risky = ctk.CTkSwitch(foot, text="Ask before buying/sending/deleting",
                                    progress_color=ACCENT, button_color=TEXT,
                                    button_hover_color="#ffffff", fg_color=LINE,
                                    text_color=MUTED, font=("Segoe UI", 12))
@@ -232,14 +232,14 @@ class App(ctk.CTk):
                                       text_color_disabled=FAINT,
                                       font=("Segoe UI Semibold", 13), command=self.stop_task)
         self.stop_btn.pack(side="right", padx=8)
-        self.steps_lbl = ctk.CTkLabel(foot, text="25 Schritte", text_color=MUTED, width=74,
+        self.steps_lbl = ctk.CTkLabel(foot, text="25 steps", text_color=MUTED, width=74,
                                       font=("Segoe UI", 12))
         self.steps_lbl.pack(side="right", padx=(0, 10))
         self.steps = ctk.CTkSlider(foot, from_=5, to=80, number_of_steps=15, width=120,
                                    progress_color=ACCENT, button_color=TEXT,
                                    button_hover_color="#ffffff", fg_color=LINE,
                                    command=lambda v: self.steps_lbl.configure(
-                                       text=f"{int(v)} Schritte"))
+                                       text=f"{int(v)} steps"))
         self.steps.set(25)
         self.steps.pack(side="right")
 
@@ -257,7 +257,7 @@ class App(ctk.CTk):
         self.pill.overrideredirect(True)
         self.pill.attributes("-topmost", True)
         self.pill.configure(bg=ACCENT)
-        self.pill_lbl = tk.Label(self.pill, text="✻ JevPilot steuert · Ctrl+Alt+X stoppt",
+        self.pill_lbl = tk.Label(self.pill, text="✻ JevPilot is in control · Ctrl+Alt+X stops",
                                  bg=ACCENT, fg="white", font=("Segoe UI Semibold", 10),
                                  padx=14, pady=5)
         self.pill_lbl.pack()
@@ -312,22 +312,22 @@ class App(ctk.CTk):
         box = ctk.CTkFrame(self.games_box, fg_color="transparent", border_width=1,
                            border_color=LINE, corner_radius=9, width=CARD_W)
         box.pack(pady=(3, 6), anchor="w")
-        ctk.CTkLabel(box, text="+  Mehr Spiele", text_color=TEXT, font=("Segoe UI Semibold", 12)
+        ctk.CTkLabel(box, text="+  More games", text_color=TEXT, font=("Segoe UI Semibold", 12)
                      ).pack(anchor="w", padx=12, pady=(8, 0))
-        ctk.CTkLabel(box, text="Frag Claude Code oder Codex – Prompt\nkopieren, Spielnamen eintragen.",
+        ctk.CTkLabel(box, text="Ask Claude Code or Codex – copy the\nprompt, fill in the game name.",
                      text_color=MUTED, font=("Segoe UI", 11), justify="left"
                      ).pack(anchor="w", padx=12)
-        btn = ctk.CTkButton(box, text="Prompt kopieren", height=26, width=CARD_W - 24,
+        btn = ctk.CTkButton(box, text="Copy prompt", height=26, width=CARD_W - 24,
                             corner_radius=7, fg_color=INPUT, hover_color=LINE, text_color=TEXT,
                             border_width=1, border_color=ACCENT_DIM, font=("Segoe UI", 11))
 
         def copy():
             self.clipboard_clear()
             self.clipboard_append(adapter_prompt())
-            btn.configure(text="✓ Kopiert")
-            self.log("Spiele-Prompt kopiert – in Claude Code oder Codex einfügen und den "
-                     "Spielnamen eintragen.", "ok")
-            self.after(1800, lambda: btn.configure(text="Prompt kopieren"))
+            btn.configure(text="✓ Copied")
+            self.log("Game prompt copied – paste it into Claude Code or Codex and fill in "
+                     "the game name.", "ok")
+            self.after(1800, lambda: btn.configure(text="Copy prompt"))
         btn.configure(command=copy)
         btn.pack(padx=12, pady=(6, 10))
 
@@ -342,10 +342,10 @@ class App(ctk.CTk):
     def select_game(self, adapter):
         self.selected_game = adapter
         if adapter:
-            self.target.configure(text=f"Spiel: {adapter.name}  ·  Ziel oder Spielstil "
-                                       "beschreiben (optional), dann Start", text_color=ACCENT)
+            self.target.configure(text=f"Game: {adapter.name}  ·  describe a goal or play style "
+                                       "(optional), then Start", text_color=ACCENT)
         else:
-            self.target.configure(text="Was soll Jev tun?  z. B.  öffne youtube und suche "
+            self.target.configure(text="What should Jev do?  e.g.  open youtube and search "
                                        "\"lofi hip hop\"", text_color=MUTED)
         self._paint_all()
 
@@ -359,7 +359,7 @@ class App(ctk.CTk):
             return
         if self.selected_game:
             game = self.selected_game
-            self.log(f"\n> Spiel: {game.name}", "user")
+            self.log(f"\n> Game: {game.name}", "user")
             self.worker.jobs.put(lambda: self.worker.game(game, prompt))
             return
         if not prompt:
@@ -374,23 +374,23 @@ class App(ctk.CTk):
     def remote_run(self, prompt: str, mode: str, steps: int, risky: bool, game) -> str | None:
         """Start a job sent from the phone app. Returns an error text or None."""
         if self.busy:
-            return "JevPilot arbeitet schon – erst stoppen."
+            return "JevPilot is already busy – stop it first."
         if not self.cfg.get("api_key"):
-            return "Am PC ist kein API-Key gesetzt."
+            return "No API key is set on the PC."
         if game:
             adapter = next((a for a in self.adapters if a.name == game), None)
             if adapter is None:
-                return f"Spiel {game} gibt es am PC nicht."
+                return f"Game {game} is not installed on the PC."
             self.busy = True
-            self.log(f"\n> (Handy) Spiel: {adapter.name}", "user")
+            self.log(f"\n> (phone) Game: {adapter.name}", "user")
             self.worker.jobs.put(lambda: self.worker.game(adapter, prompt))
             return None
         if not prompt:
-            return "Prompt ist leer."
+            return "The prompt is empty."
         if mode not in ("Auto", "Browser", "PC"):
             mode = "Auto"
         self.busy = True
-        self.log(f"\n> (Handy) {prompt}", "user")
+        self.log(f"\n> (phone) {prompt}", "user")
         steps = max(3, min(steps, 120))
         self.worker.jobs.put(lambda: self.worker.task(prompt, mode, steps, risky))
         return None
@@ -413,14 +413,14 @@ class App(ctk.CTk):
                 self.logbox.insert("end", body + "\n", tag)
             self.logbox.see("end")
             self.logbox.configure(state="disabled")
-            self.pill_lbl.configure(text=f"✻ {body.strip()[:70]}  ·  Ctrl+Alt+X stoppt")
+            self.pill_lbl.configure(text=f"✻ {body.strip()[:70]}  ·  Ctrl+Alt+X stops")
         self.after(0, do)
 
     def set_busy(self, busy: bool):
         def do():
             self.busy = busy
             self.start_btn.configure(state="disabled" if busy else "normal",
-                                     text="Läuft …" if busy else "Start  ↵")
+                                     text="Running …" if busy else "Start  ↵")
             self.stop_btn.configure(state="normal" if busy else "disabled",
                                     text_color=TEXT if busy else MUTED,
                                     border_color=ACCENT if busy else LINE)
@@ -451,7 +451,7 @@ class App(ctk.CTk):
 
         def do():
             win = ctk.CTkToplevel(self, fg_color=BG)
-            win.title("JevPilot – Bestätigung")
+            win.title("JevPilot – Confirm")
             win.attributes("-topmost", True)
             win.resizable(False, False)
             win.protocol("WM_DELETE_WINDOW", lambda: req.resolve(False))
@@ -459,10 +459,10 @@ class App(ctk.CTk):
                          justify="left", wraplength=420).pack(padx=22, pady=(20, 12), anchor="w")
             row = ctk.CTkFrame(win, fg_color="transparent")
             row.pack(fill="x", padx=22, pady=(0, 18))
-            ctk.CTkButton(row, text="Erlauben", fg_color=ACCENT, hover_color=ACCENT_HI,
+            ctk.CTkButton(row, text="Allow", fg_color=ACCENT, hover_color=ACCENT_HI,
                           corner_radius=9, width=110, command=lambda: req.resolve(True)
                           ).pack(side="right")
-            ctk.CTkButton(row, text="Ablehnen", fg_color="transparent", border_width=1,
+            ctk.CTkButton(row, text="Deny", fg_color="transparent", border_width=1,
                           border_color=LINE, hover_color=LINE, text_color=MUTED, corner_radius=9,
                           width=110, command=lambda: req.resolve(False)).pack(side="right", padx=8)
 
@@ -480,7 +480,7 @@ class App(ctk.CTk):
     def welcome(self):
         """First start: JevPilot only works with the user's own TypeSafe key."""
         dlg = ctk.CTkToplevel(self, fg_color=BG)
-        dlg.title("Willkommen bei JevPilot")
+        dlg.title("Welcome to JevPilot")
         dlg.geometry("560x330")
         dlg.resizable(False, False)
         dlg.transient(self)
@@ -491,17 +491,17 @@ class App(ctk.CTk):
         head.pack(anchor="w", padx=24, pady=(24, 0))
         ctk.CTkLabel(head, text="✻", font=("Segoe UI Symbol", 24), text_color=ACCENT
                      ).pack(side="left", padx=(0, 8))
-        ctk.CTkLabel(head, text="Willkommen bei JevPilot", font=("Georgia", 20), text_color=TEXT
+        ctk.CTkLabel(head, text="Welcome to JevPilot", font=("Georgia", 20), text_color=TEXT
                      ).pack(side="left")
-        ctk.CTkLabel(dlg, text="JevPilot lässt TypeSafe Jev deinen PC, Browser und Spiele bedienen.\n"
-                               "Dafür brauchst du deinen eigenen TypeSafe API-Key.",
+        ctk.CTkLabel(dlg, text="JevPilot lets TypeSafe Jev operate your PC, browser and games.\n"
+                               "To use it you need your own TypeSafe API key.",
                      text_color=MUTED, font=("Segoe UI", 12), justify="left"
                      ).pack(anchor="w", padx=24, pady=(10, 12))
         entry = ctk.CTkEntry(dlg, show="•", width=512, height=38, fg_color=INPUT,
                              border_color=LINE, text_color=TEXT, corner_radius=9,
-                             placeholder_text="API-Key einfügen")
+                             placeholder_text="Paste your API key")
         entry.pack(padx=24)
-        ctk.CTkLabel(dlg, text=f"Wird nur auf diesem PC gespeichert: {CONFIG_PATH}",
+        ctk.CTkLabel(dlg, text=f"Stored only on this PC: {CONFIG_PATH}",
                      text_color=FAINT, font=("Segoe UI", 11)).pack(anchor="w", padx=24, pady=4)
         status = ctk.CTkLabel(dlg, text="", text_color=MUTED)
         status.pack(anchor="w", padx=24)
@@ -509,9 +509,9 @@ class App(ctk.CTk):
         def go():
             key = entry.get().strip()
             if not key:
-                status.configure(text="Bitte einen Key einfügen.", text_color=YELLOW)
+                status.configure(text="Please paste a key.", text_color=YELLOW)
                 return
-            status.configure(text="Teste Key …", text_color=MUTED)
+            status.configure(text="Testing key …", text_color=MUTED)
 
             def test():
                 try:
@@ -523,54 +523,54 @@ class App(ctk.CTk):
                 def ok():
                     self.cfg["api_key"] = key
                     save_config(self.cfg)
-                    self.log("✓ API-Key gespeichert. Los geht's.", "ok")
+                    self.log("✓ API key saved. Let's go.", "ok")
                     dlg.destroy()
                 self.after(0, ok)
             threading.Thread(target=test, daemon=True).start()
         entry.bind("<Return>", lambda e: go())
-        ctk.CTkButton(dlg, text="Prüfen & loslegen", fg_color=ACCENT, hover_color=ACCENT_HI,
+        ctk.CTkButton(dlg, text="Check & start", fg_color=ACCENT, hover_color=ACCENT_HI,
                       corner_radius=9, height=36, font=("Segoe UI Semibold", 13),
                       command=go).pack(anchor="e", padx=24, pady=10)
         dlg.after(200, entry.focus_set)
 
     def open_settings(self):
         dlg = ctk.CTkToplevel(self, fg_color=BG)
-        dlg.title("Einstellungen")
+        dlg.title("Settings")
         dlg.geometry("540x300")
         dlg.transient(self)
         dlg.after(100, dlg.grab_set)
-        ctk.CTkLabel(dlg, text="TypeSafe API-Key", font=("Georgia", 16), text_color=TEXT
+        ctk.CTkLabel(dlg, text="TypeSafe API key", font=("Georgia", 16), text_color=TEXT
                      ).pack(anchor="w", padx=22, pady=(22, 6))
         entry = ctk.CTkEntry(dlg, show="•", width=496, height=36, fg_color=INPUT,
                              border_color=LINE, text_color=TEXT, corner_radius=9)
         entry.insert(0, self.cfg.get("api_key", ""))
         entry.pack(padx=22)
-        ctk.CTkLabel(dlg, text=f"Nur lokal gespeichert: {CONFIG_PATH}", text_color=FAINT,
+        ctk.CTkLabel(dlg, text=f"Stored locally only: {CONFIG_PATH}", text_color=FAINT,
                      font=("Segoe UI", 11)).pack(anchor="w", padx=22, pady=4)
         status = ctk.CTkLabel(dlg, text="", text_color=MUTED)
         status.pack(anchor="w", padx=22)
-        ctk.CTkLabel(dlg, text="Handy-App", font=("Georgia", 16), text_color=TEXT
+        ctk.CTkLabel(dlg, text="Phone app", font=("Georgia", 16), text_color=TEXT
                      ).pack(anchor="w", padx=22, pady=(8, 2))
-        ctk.CTkLabel(dlg, text=f"PC-Adresse  {lan_ip()}:{PORT}     Kopplungscode  "
+        ctk.CTkLabel(dlg, text=f"PC address  {lan_ip()}:{PORT}     Pairing code  "
                                f"{self.cfg.get('remote_token', '')}",
                      text_color=MUTED, font=("Cascadia Mono", 12)).pack(anchor="w", padx=22)
 
         def save():
             self.cfg["api_key"] = entry.get().strip()
             save_config(self.cfg)
-            status.configure(text="Teste Key …", text_color=MUTED)
+            status.configure(text="Testing key …", text_color=MUTED)
 
             def test():
                 try:
                     Jev(self.cfg["api_key"]).ask("ping", {"t": {"type": "noul",
                                                               "instructions": "This is a test"}})
-                    self.after(0, lambda: (status.configure(text="✓ Key funktioniert",
+                    self.after(0, lambda: (status.configure(text="✓ Key works",
                                                             text_color=GREEN),
                                            dlg.after(700, dlg.destroy)))
                 except JevError as e:
                     self.after(0, lambda: status.configure(text=f"✗ {e}", text_color=RED))
             threading.Thread(target=test, daemon=True).start()
-        ctk.CTkButton(dlg, text="Speichern & testen", fg_color=ACCENT, hover_color=ACCENT_HI,
+        ctk.CTkButton(dlg, text="Save & test", fg_color=ACCENT, hover_color=ACCENT_HI,
                       corner_radius=9, height=34, font=("Segoe UI Semibold", 13),
                       command=save).pack(anchor="e", padx=22, pady=10)
 

@@ -78,12 +78,12 @@ class Agent:
         banned: set[str] = set()
         for step in range(1, max_steps + 1):
             if self.stop.is_set():
-                self.log("Gestoppt.", "warn")
+                self.log("Stopped.", "warn")
                 return
             try:
                 state, options = env.observe()
             except Exception as e:  # noqa: BLE001 - surface any env failure to the log
-                self.log(f"Beobachten fehlgeschlagen: {e}", "err")
+                self.log(f"Could not read the screen: {e}", "err")
                 return
             options = [o for o in options if o.desc not in banned]
             options.append(Option("Finish: the task is complete, stop here", "finish", priority=99))
@@ -100,17 +100,17 @@ class Agent:
             prob = nxt["probabilities"].get(nxt["choice"], 0)
             self.log(f"[{step}] {opt.desc}", "act")
             self.log(f"     p={prob:.2f}  conf={nxt.get('confidence', 0):.2f}  "
-                     f"fertig={done_p:.2f}  {dt*1000:.0f} ms  ({len(options)} Optionen)", "meta")
+                     f"done={done_p:.2f}  {dt*1000:.0f} ms  ({len(options)} options)", "meta")
 
             if opt.kind == "finish" or (done_p > 0.8 and step > 1):
-                self.log("Jev meldet: Aufgabe erledigt.", "ok")
+                self.log("Jev reports: task done.", "ok")
                 return
             if self.stop.is_set():
-                self.log("Gestoppt.", "warn")
+                self.log("Stopped.", "warn")
                 return
             if ask_risky and self._is_risky(opt, full_state):
-                if not self.confirm(f"Jev will jetzt ausführen:\n\n{opt.desc}\n\nErlauben?"):
-                    self.log("Vom Nutzer abgelehnt, Aktion gesperrt.", "warn")
+                if not self.confirm(f"Jev wants to do this now:\n\n{opt.desc}\n\nAllow?"):
+                    self.log("Denied by the user, action blocked.", "warn")
                     banned.add(opt.desc)
                     history.append(f"{opt.desc} -> REFUSED by user, do something else")
                     continue
@@ -118,12 +118,12 @@ class Agent:
                 result = env.execute(opt)
             except Exception as e:  # noqa: BLE001
                 result = f"failed: {str(e).splitlines()[0][:150]}"
-                self.log(f"     Fehler: {result}", "err")
+                self.log(f"     Error: {result}", "err")
             history.append(f"{opt.desc} -> {result}")
             repeats[opt.desc] = repeats.get(opt.desc, 0) + 1
             if repeats[opt.desc] >= 3:
                 banned.add(opt.desc)
-        self.log(f"Schritt-Limit ({max_steps}) erreicht.", "warn")
+        self.log(f"Step limit ({max_steps}) reached.", "warn")
 
     def _trim(self, options: list[Option], prompt: str) -> list[Option]:
         if len(options) <= MAX_CHOICE_OPTIONS:

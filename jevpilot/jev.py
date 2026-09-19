@@ -22,7 +22,7 @@ class Jev:
     def ask(self, state, questions: dict, retries: int = 3) -> tuple[dict, float]:
         """Send one System One request. Returns (answers, seconds)."""
         if not self.api_key:
-            raise JevError("Kein API-Key gesetzt (Einstellungen).")
+            raise JevError("No API key set (Settings).")
         body = {"model": self.model, "state": state, "questions": questions}
         headers = {"Authorization": f"Bearer {self.api_key}"}
         delay = 1.0
@@ -32,7 +32,7 @@ class Jev:
                 r = self.session.post(ENDPOINT, json=body, headers=headers, timeout=30)
             except requests.RequestException as e:
                 if attempt == retries:
-                    raise JevError(f"Netzwerkfehler: {e}") from e
+                    raise JevError(f"Network error: {e}") from e
                 time.sleep(delay)
                 delay *= 2
                 continue
@@ -46,9 +46,9 @@ class Jev:
                 delay *= 2
                 continue
             if r.status_code in (401, 403):
-                raise JevError("API-Key ungültig oder ohne Rechte (HTTP %d)." % r.status_code)
+                raise JevError("API key invalid or not permitted (HTTP %d)." % r.status_code)
             raise JevError(f"HTTP {r.status_code}: {r.text[:300]}")
-        raise JevError("Keine Antwort von Jev.")
+        raise JevError("No answer from Jev.")
 
 
 def choice(instructions: str, options: dict) -> dict:

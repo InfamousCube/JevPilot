@@ -49,25 +49,25 @@ object PhoneAgent {
     /** Returns an error text, or null when the task started. */
     fun start(apiKey: String, prompt: String, maxSteps: Int, askRisky: Boolean): String? {
         val svc = JevAccessibilityService.instance
-            ?: return "Bedienungshilfe für JevPilot ist aus – oben auf „Aktivieren“ tippen."
-        if (busy) return "Jev arbeitet schon."
-        if (apiKey.isBlank()) return "Kein API-Key gesetzt (⚙)."
-        if (prompt.isBlank()) return "Prompt ist leer."
+            ?: return "The JevPilot accessibility service is off – tap “Enable” above."
+        if (busy) return "Jev is already busy."
+        if (apiKey.isBlank()) return "No API key set (⚙)."
+        if (prompt.isBlank()) return "The prompt is empty."
         stop.set(false)
         setBusy(true)
         log.add("\n> $prompt", "user")
         thread(name = "jev-agent") {
             try {
-                svc.showPill("✻ Jev startet …  ·  tippen = Stop")
+                svc.showPill("✻ Jev is starting …  ·  tap = stop")
                 svc.goHome()
                 Thread.sleep(900)
                 run(Jev(apiKey), svc, prompt, maxSteps, askRisky)
             } catch (e: JevError) {
                 log.add("Jev: ${e.message}", "err")
             } catch (e: Exception) {
-                log.add("Fehler: ${e.javaClass.simpleName}: ${e.message}", "err")
+                log.add("Error: ${e.javaClass.simpleName}: ${e.message}", "err")
             } finally {
-                svc.showPill(if (stop.get()) "✻ Gestoppt" else "✻ Jev ist fertig")
+                svc.showPill(if (stop.get()) "✻ Stopped" else "✻ Jev is done")
                 svc.hidePill(2500)
                 setBusy(false)
             }
@@ -91,7 +91,7 @@ object PhoneAgent {
         val repeats = HashMap<String, Int>()
         val banned = HashSet<String>()
         for (step in 1..maxSteps) {
-            if (stop.get()) { log.add("Gestoppt.", "warn"); return }
+            if (stop.get()) { log.add("Stopped.", "warn"); return }
             val (screen, found) = svc.observe(prompt)
             var options = found.filter { it.desc !in banned } +
                 Opt("Finish: the task is complete, stop here", "finish", priority = 99.0)
@@ -109,16 +109,16 @@ object PhoneAgent {
             val prob = next.optJSONObject("probabilities")?.optDouble(key, 0.0) ?: 0.0
             val doneP = answers.getJSONObject("done").getDouble("noul")
             log.add("[$step] ${opt.desc}", "act")
-            log.add("p=%.2f  fertig=%.2f  %d ms  (%d Optionen)".format(prob, doneP, (dt * 1000).toInt(), options.size), "meta")
-            svc.showPill("✻ ${opt.desc}  ·  tippen = Stop")
+            log.add("p=%.2f  done=%.2f  %d ms  (%d options)".format(prob, doneP, (dt * 1000).toInt(), options.size), "meta")
+            svc.showPill("✻ ${opt.desc}  ·  tap = stop")
 
             if (opt.kind == "finish" || (doneP > 0.8 && step > 1)) {
-                log.add("Jev meldet: Aufgabe erledigt.", "ok"); return
+                log.add("Jev reports: task done.", "ok"); return
             }
-            if (stop.get()) { log.add("Gestoppt.", "warn"); return }
+            if (stop.get()) { log.add("Stopped.", "warn"); return }
             if (askRisky && isRisky(jev, opt, state)) {
-                if (!svc.confirm("Jev will jetzt ausführen:\n\n${opt.desc}\n\nErlauben?") { stop.get() }) {
-                    log.add("Vom Nutzer abgelehnt, Aktion gesperrt.", "warn")
+                if (!svc.confirm("Jev wants to do this now:\n\n${opt.desc}\n\nAllow?") { stop.get() }) {
+                    log.add("Denied by the user, action blocked.", "warn")
                     banned.add(opt.desc)
                     history.add("${opt.desc} -> REFUSED by user, do something else")
                     continue
@@ -134,7 +134,7 @@ object PhoneAgent {
             repeats[opt.desc] = n
             if (n >= 3) banned.add(opt.desc)
         }
-        log.add("Schritt-Limit ($maxSteps) erreicht.", "warn")
+        log.add("Step limit ($maxSteps) reached.", "warn")
     }
 
     private fun isRisky(jev: Jev, opt: Opt, state: JSONObject): Boolean {

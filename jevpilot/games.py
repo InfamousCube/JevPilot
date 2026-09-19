@@ -88,7 +88,7 @@ def load_adapters(log) -> list[GameAdapter]:
             adapter.file_stem = fn[:-3]
             found.append(adapter)
         except Exception as e:  # noqa: BLE001 - one broken adapter must not kill the app
-            log(f"Spiel-Adapter {fn} fehlerhaft: {e}", "err")
+            log(f"Game adapter {fn} is broken: {e}", "err")
     return found
 
 
@@ -98,7 +98,7 @@ def play(adapter: GameAdapter, jev: Jev, prompt: str, stop: threading.Event, log
         adapter.run(jev, prompt, stop, log)
         return
     adapter.start()
-    log(f"Spiele {adapter.name} mit {adapter.hz} Entscheidungen/s. Stop: Ctrl+Alt+X", "ok")
+    log(f"Playing {adapter.name} at {adapter.hz} decisions/s. Stop: Ctrl+Alt+X", "ok")
     n = 0
     try:
         while not stop.is_set():
@@ -114,23 +114,23 @@ def play(adapter: GameAdapter, jev: Jev, prompt: str, stop: threading.Event, log
             time.sleep(max(0.0, 1 / adapter.hz - (time.perf_counter() - t0)))
     finally:
         adapter.stop()
-        log(f"{adapter.name} beendet nach {n} Zügen.", "warn")
+        log(f"{adapter.name} ended after {n} moves.", "warn")
 
 
 # Repo link used in the "more games" prompt (also in the Android app, MainActivity.REPO_URL).
 REPO_URL = "https://github.com/InfamousCube/JevPilot"
 
-ADAPTER_PROMPT = """Ich nutze JevPilot ({repo}) und will ein neues Spiel.
-Bau mir einen Spiel-Adapter für: <SPIELNAME HIER EINTRAGEN>
+ADAPTER_PROMPT = """I use JevPilot ({repo}) and want a new game.
+Build me a game adapter for: <PUT THE GAME NAME HERE>
 
-So funktioniert JevPilot:
-- Adapter sind .py-Dateien im Ordner "games" neben JevPilot.exe (Standard: %LOCALAPPDATA%\\Programs\\JevPilot\\games). Sie werden beim Start geladen, die Exe muss nicht neu gebaut werden.
-- Vorlagen im Repo: jevpilot/games.py (Klasse GameAdapter, Doku oben in der Datei) und games/rounds.py.
-- Jev (TypeSafe System One) sieht keine Bilder und schreibt keinen Text. Er beantwortet nur Choice (max. 255 Optionen), Score und Noul (ja/nein). Der Adapter muss den Spielzustand als Text/JSON liefern und jeden möglichen Zug als kurzen englischen Satz anbieten.
-- Hat das Spiel keinen lesbaren Zustand, bau eine Brücke: z. B. einen BepInEx-Mod wie ROUNDS-Bridge/JevBridge, eine Speicherdatei, eine Web-API oder Bildschirm-Auslese.
-- Leg ein breites Titelbild als games/<dateiname>.jpg dazu (wird in der Bibliothek rechts abgedunkelt).
+How JevPilot works:
+- Adapters are .py files in the "games" folder next to JevPilot.exe (default: %LOCALAPPDATA%\\Programs\\JevPilot\\games). They are loaded at startup; the exe does not need to be rebuilt.
+- Templates in the repo: jevpilot/games.py (class GameAdapter, docs at the top of the file) and games/rounds.py.
+- Jev (TypeSafe System One) cannot see images and cannot write text. It only answers Choice (max. 255 options), Score and Noul (yes/no). The adapter must provide the game state as text/JSON and offer every possible move as a short English sentence.
+- If the game has no readable state, build a bridge: e.g. a BepInEx mod like ROUNDS-Bridge/JevBridge, a save file, a web API or screen reading.
+- Add a wide cover image as games/<file name>.jpg (the library darkens it towards the right).
 
-Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
+Test the adapter at the end and tell me how to start it in JevPilot."""
 
 
 def adapter_prompt() -> str:

@@ -1,28 +1,28 @@
 # ROUNDS
 
-In ROUNDS spielst du gegen Jev. Jev bewegt sich, springt, schießt, blockt und wählt nach jeder Runde eine Karte. Zielen und Block-Timing übernimmt der Mod. Jev trifft etwa 7 Entscheidungen pro Sekunde.
+Play ROUNDS against Jev. Jev moves, jumps, shoots, blocks and picks a card after every round. The mod handles aiming and block timing, and Jev makes about 7 decisions per second.
 
-## Einrichten (einmalig)
-1. [BepInEx 5 (Windows x64)](https://github.com/BepInEx/BepInEx/releases) laden und in den ROUNDS-Ordner entpacken.
-   Den Ordner findest du so: in Steam Rechtsklick auf ROUNDS → Verwalten → Lokale Dateien durchsuchen.
-2. ROUNDS einmal starten und wieder schließen. BepInEx legt dabei seine Ordner an.
-3. `JevBridge.dll` aus den [Releases](../../../releases/latest) nach `ROUNDS\BepInEx\plugins\JevBridge\` kopieren.
+## Setup (once)
+1. Download [BepInEx 5 (Windows x64)](https://github.com/BepInEx/BepInEx/releases) and unzip it into the ROUNDS folder.
+   To find the folder, right-click ROUNDS in Steam → Manage → Browse local files.
+2. Start ROUNDS once, then close it. This lets BepInEx create its folders.
+3. Copy `JevBridge.dll` from the [releases](../../../releases/latest) to `ROUNDS\BepInEx\plugins\JevBridge\`.
 
-## Spielen
-1. In JevPilot links **ROUNDS** wählen und **Start** drücken. Läuft ROUNDS noch nicht, startet JevPilot es über Steam.
-2. Im Spiel nacheinander:
-   1. **Lokal** → **Versus** wählen.
-   2. **Leertaste** drücken: du trittst bei.
-   3. **B** drücken: ein Bot tritt bei, Jev übernimmt ihn.
-   4. **Leertaste** drücken: bereit.
-3. Aufhören: `Ctrl+Alt+X` oder Stop. Danach spielt wieder die normale Bot-KI.
+## Play
+1. In JevPilot, select **ROUNDS** on the left and press **Start**. If ROUNDS isn't running, JevPilot starts it through Steam.
+2. In the game, do this in order:
+   1. Choose **Local** → **Versus**.
+   2. Press **Space** to join.
+   3. Press **B** to add a bot. Jev takes over the bot.
+   4. Press **Space** again to ready up.
+3. Stop with `Ctrl+Alt+X` or the Stop button. The normal bot AI then takes over again.
 
-Soll Jev einen bestimmten Spieler steuern, schreib zum Beispiel `spieler 1` in den Prompt.
+To make Jev control a specific player, write e.g. `player 1` in the prompt.
 
-Der Mod greift nur in lokalen Spielen ein, nie online.
+The mod only acts in local games, never online.
 
-## Fehler
-| Meldung | Lösung |
+## Troubleshooting
+| Message | Fix |
 |---|---|
-| „ROUNDS läuft, aber ohne JevBridge“ | BepInEx oder JevBridge fehlt, oder ROUNDS lief schon vorher. ROUNDS schließen und neu starten. |
-| „Warte auf Bot – drück B in der Lobby“ | In der Lobby mit **B** einen Bot hinzufügen. |
+| "ROUNDS is running without JevBridge" | BepInEx or JevBridge is missing, or ROUNDS was already running when you started. Close ROUNDS and start it again. |
+| "Waiting for a bot – press B in the lobby" | Add a bot in the lobby with **B**. |

@@ -24,7 +24,7 @@ class Jev(private val apiKey: String) {
 
     /** Returns (answers, seconds). */
     fun ask(state: Any, questions: JSONObject, retries: Int = 3): Pair<JSONObject, Double> {
-        if (apiKey.isBlank()) throw JevError("Kein API-Key gesetzt (Einstellungen).")
+        if (apiKey.isBlank()) throw JevError("No API key set (Settings).")
         val body = JSONObject().put("model", MODEL).put("state", state).put("questions", questions)
             .toString().toByteArray()
         var delay = 1000L
@@ -49,15 +49,15 @@ class Jev(private val apiKey: String) {
                 if (code in listOf(429, 500, 502, 503, 504) && attempt < retries) {
                     Thread.sleep(delay); delay *= 2; continue
                 }
-                if (code == 401 || code == 403) throw JevError("API-Key ungültig oder ohne Rechte (HTTP $code).")
+                if (code == 401 || code == 403) throw JevError("API key invalid or not permitted (HTTP $code).")
                 throw JevError("HTTP $code: ${err.take(300)}")
             } catch (e: IOException) {
-                if (attempt == retries) throw JevError("Netzwerkfehler: ${e.message}")
+                if (attempt == retries) throw JevError("Network error: ${e.message}")
                 Thread.sleep(delay); delay *= 2
             } finally {
                 conn.disconnect()
             }
         }
-        throw JevError("Keine Antwort von Jev.")
+        throw JevError("No answer from Jev.")
     }
 }

@@ -29,7 +29,7 @@ $s = $shell.CreateShortcut($lnk)
 $s.TargetPath = "$target\JevPilot.exe"
 $s.WorkingDirectory = $target
 $s.IconLocation = "$target\JevPilot.ico"
-$s.Description = "Computer Use mit TypeSafe Jev"
+$s.Description = "Computer use with TypeSafe Jev"
 $s.Save()
-Write-Host "Installiert: $target\JevPilot.exe"
-Write-Host "Startmenue:  $lnk"
+Write-Host "Installed:  $target\JevPilot.exe"
+Write-Host "Start menu: $lnk"

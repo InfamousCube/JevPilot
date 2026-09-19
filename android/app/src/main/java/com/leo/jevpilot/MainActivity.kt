@@ -115,7 +115,7 @@ class MainActivity : Activity() {
             row.addView(label("›", 24f, Pal.ACCENT, true).apply { setPadding(dp(4), 0, dp(6), 0) })
             input.apply {
                 background = null; setTextColor(Pal.TEXT); setHintTextColor(Pal.FAINT); textSize = 15f
-                this.hint = "Aufgabe für Jev …"
+                this.hint = "Task for Jev …"
                 minLines = 2; maxLines = 6; gravity = Gravity.TOP
                 inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 setOnFocusChangeListener { _, f -> box.background = rounded(Pal.INPUT, 14, 1, if (f) Pal.ACCENT_DIM else Pal.LINE) }
@@ -124,7 +124,7 @@ class MainActivity : Activity() {
             box.addView(row)
 
             risky.apply {
-                text = "Vor Kaufen/Senden/Löschen fragen"; textSize = 13f; setTextColor(Pal.MUTED)
+                text = "Ask before buying/sending/deleting"; textSize = 13f; setTextColor(Pal.MUTED)
                 isChecked = true
                 thumbTintList = android.content.res.ColorStateList(
                     arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(Pal.TEXT, Pal.MUTED))
@@ -142,13 +142,13 @@ class MainActivity : Activity() {
                 progressBackgroundTintList = android.content.res.ColorStateList.valueOf(Pal.LINE)
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(s: SeekBar?, p: Int, u: Boolean) {
-                        steps = 5 + p * 5; prefs.steps = steps; stepsLbl.text = "$steps Schritte"
+                        steps = 5 + p * 5; prefs.steps = steps; stepsLbl.text = "$steps steps"
                     }
                     override fun onStartTrackingTouch(s: SeekBar?) {}
                     override fun onStopTrackingTouch(s: SeekBar?) {}
                 })
             }
-            stepsLbl.text = "$steps Schritte"
+            stepsLbl.text = "$steps steps"
             foot.addView(stepsLbl, lp(dp(78)))
             foot.addView(seek, lp(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
             stop.apply {
@@ -199,7 +199,7 @@ class MainActivity : Activity() {
         }
 
         fun setBusy(busy: Boolean) {
-            start.text = if (busy) "Läuft …" else "Start  ↵"
+            start.text = if (busy) "Running …" else "Start  ↵"
             start.background = rounded(if (busy) Pal.ACCENT_DIM else Pal.ACCENT, 9)
             start.isEnabled = !busy
             stop.isEnabled = busy
@@ -228,9 +228,9 @@ class MainActivity : Activity() {
             setPadding(dp(12), dp(4), dp(4), dp(4)); setOnClickListener { openSettings() }
         })
         root.addView(head)
-        root.addView(label("Computer Use mit TypeSafe Jev", 12f, Pal.MUTED).apply { setPadding(dp(2), 0, 0, dp(12)) })
+        root.addView(label("Computer use with TypeSafe Jev", 12f, Pal.MUTED).apply { setPadding(dp(2), 0, 0, dp(12)) })
 
-        val (tabTrack, tabItems) = segmented(listOf("PC steuern", "Handy steuern")) { selectTab(it) }
+        val (tabTrack, tabItems) = segmented(listOf("Control PC", "Control phone")) { selectTab(it) }
         tabs = tabItems
         root.addView(tabTrack)
 
@@ -238,14 +238,14 @@ class MainActivity : Activity() {
         val pcPanel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         pcStatus = label("", 13f, Pal.MUTED).apply { setPadding(dp(4), dp(12), 0, 0) }
         pcPanel.addView(pcStatus)
-        pcPanel.addView(section("Modus"))
+        pcPanel.addView(section("Mode"))
         val (modeTrack, modeItems) = segmented(listOf("Auto", "Browser", "PC")) {
             mode = listOf("Auto", "Browser", "PC")[it]; selectGame(null); paintSegments(modeButtons, it)
         }
         modeButtons = modeItems
         paintSegments(modeButtons, 0)
         pcPanel.addView(modeTrack)
-        pcPanel.addView(section("Spiele"))
+        pcPanel.addView(section("Games"))
         gamesBox = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         pcPanel.addView(gamesBox)
         pcComposer = Composer(pcLog, "", ::startPc, ::stopPc)
@@ -258,17 +258,17 @@ class MainActivity : Activity() {
             orientation = LinearLayout.VERTICAL
             background = rounded(Pal.SIDEBAR, 12, 1, Pal.LINE)
             setPadding(dp(14), dp(12), dp(14), dp(12))
-            addView(label("Bedienungshilfe ist aus", 14f, Pal.YELLOW, true))
-            addView(label("Damit Jev dein Handy bedienen kann: Einstellungen → Bedienungshilfen → " +
-                "Installierte Apps → JevPilot → einschalten.", 13f, Pal.MUTED).apply { setPadding(0, dp(4), 0, dp(10)) })
-            addView(label("Aktivieren", 14f, 0xFFFFFFFF.toInt(), true).apply {
+            addView(label("Accessibility service is off", 14f, Pal.YELLOW, true))
+            addView(label("So Jev can operate your phone: Settings → Accessibility → " +
+                "Installed apps → JevPilot → turn on.", 13f, Pal.MUTED).apply { setPadding(0, dp(4), 0, dp(10)) })
+            addView(label("Enable", 14f, 0xFFFFFFFF.toInt(), true).apply {
                 background = rounded(Pal.ACCENT, 9); setPadding(dp(16), dp(8), dp(16), dp(8))
                 setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
             }, lp(ViewGroup.LayoutParams.WRAP_CONTENT))
         }
         phonePanel.addView(a11yCard, lp().apply { topMargin = dp(12) })
         phoneComposer = Composer(PhoneAgent.log,
-            "Was soll Jev auf dem Handy tun?  z. B.  öffne youtube und suche \"lofi hip hop\"",
+            "What should Jev do on the phone?  e.g.  open youtube and search \"lofi hip hop\"",
             ::startPhone, { PhoneAgent.requestStop() })
         phoneComposer.build(phonePanel)
         PhoneAgent.onBusyChange = { phoneComposer.setBusy(it) }
@@ -282,8 +282,8 @@ class MainActivity : Activity() {
         setContentView(if (prefs.apiKey.isBlank()) welcomeView(root) else root)
         selectTab(prefs.tab)
 
-        if (pcLog.lines.isEmpty()) pcLog.add("Verbinde mit JevPilot am PC …", "meta")
-        if (PhoneAgent.log.lines.isEmpty()) PhoneAgent.log.add("Bereit. Jev bedient dieses Handy, oben erscheint eine orange Leiste – antippen stoppt.", "ok")
+        if (pcLog.lines.isEmpty()) pcLog.add("Connecting to JevPilot on the PC …", "meta")
+        if (PhoneAgent.log.lines.isEmpty()) PhoneAgent.log.add("Ready. While Jev operates this phone an orange bar shows at the top – tap it to stop.", "ok")
     }
 
     private fun applyInsets(v: View) = v.setOnApplyWindowInsetsListener { view, ins ->
@@ -301,33 +301,33 @@ class MainActivity : Activity() {
         }
         val inner = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(8), 0, dp(8), 0) }
         inner.addView(label("✻", 48f, Pal.ACCENT))
-        inner.addView(label("Willkommen bei JevPilot", 26f, Pal.TEXT).apply {
+        inner.addView(label("Welcome to JevPilot", 26f, Pal.TEXT).apply {
             typeface = Typeface.SERIF; setPadding(0, dp(4), 0, dp(10))
         })
-        inner.addView(label("JevPilot lässt TypeSafe Jev dein Handy bedienen und schickt Aufgaben an " +
-            "JevPilot auf deinem PC. Dafür brauchst du deinen eigenen TypeSafe API-Key.", 15f, Pal.MUTED))
+        inner.addView(label("JevPilot lets TypeSafe Jev operate your phone and sends tasks to " +
+            "JevPilot on your PC. To use it you need your own TypeSafe API key.", 15f, Pal.MUTED))
         val key = EditText(this).apply {
-            hint = "API-Key einfügen"; setHintTextColor(Pal.FAINT); setTextColor(Pal.TEXT); textSize = 15f
+            hint = "Paste your API key"; setHintTextColor(Pal.FAINT); setTextColor(Pal.TEXT); textSize = 15f
             background = rounded(Pal.INPUT, 12, 1, Pal.LINE); setPadding(dp(14), dp(12), dp(14), dp(12))
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             isSingleLine = true
         }
         inner.addView(key, lp().apply { topMargin = dp(22) })
-        inner.addView(label("Wird nur auf diesem Handy gespeichert.", 12f, Pal.FAINT).apply { setPadding(dp(4), dp(6), 0, 0) })
+        inner.addView(label("Stored only on this phone.", 12f, Pal.FAINT).apply { setPadding(dp(4), dp(6), 0, 0) })
         val status = label("", 13f, Pal.MUTED).apply { setPadding(dp(4), dp(10), 0, 0) }
         inner.addView(status)
-        val go = label("Prüfen & loslegen", 15f, 0xFFFFFFFF.toInt(), true).apply {
+        val go = label("Check & start", 15f, 0xFFFFFFFF.toInt(), true).apply {
             gravity = Gravity.CENTER; background = rounded(Pal.ACCENT, 10)
             setPadding(dp(18), dp(12), dp(18), dp(12))
         }
         go.setOnClickListener {
             val k = key.text.toString().trim()
-            if (k.isEmpty()) { status.text = "Bitte einen Key einfügen."; status.setTextColor(Pal.YELLOW); return@setOnClickListener }
-            status.text = "Teste Key …"; status.setTextColor(Pal.MUTED); go.isEnabled = false
+            if (k.isEmpty()) { status.text = "Please paste a key."; status.setTextColor(Pal.YELLOW); return@setOnClickListener }
+            status.text = "Testing key …"; status.setTextColor(Pal.MUTED); go.isEnabled = false
             thread {
                 val err = try {
                     Jev(k).ask("ping", JSONObject().put("t", Jev.noul("This is a test"))); null
-                } catch (e: Exception) { e.message ?: "Fehler" }
+                } catch (e: Exception) { e.message ?: "Error" }
                 runOnUiThread {
                     go.isEnabled = true
                     if (err != null) { status.text = "✗ $err"; status.setTextColor(Pal.RED) }
@@ -335,7 +335,7 @@ class MainActivity : Activity() {
                         prefs.apiKey = k
                         setContentView(main)
                         main.requestApplyInsets()
-                        toast("✓ Key gespeichert. Mit dem PC verbinden: ⚙")
+                        toast("✓ Key saved. Connect to your PC: ⚙")
                     }
                 }
             }
@@ -368,8 +368,8 @@ class MainActivity : Activity() {
 
     private fun selectGame(name: String?) {
         selectedGame = name
-        pcComposer.target.text = if (name != null) "Spiel: $name  ·  Ziel oder Spielstil (optional), dann Start"
-        else "Was soll Jev am PC tun?  z. B.  öffne youtube und suche \"lofi hip hop\""
+        pcComposer.target.text = if (name != null) "Game: $name  ·  goal or play style (optional), then Start"
+        else "What should Jev do on the PC?  e.g.  open youtube and search \"lofi hip hop\""
         pcComposer.target.setTextColor(if (name != null) Pal.ACCENT else Pal.MUTED)
         renderGames()
     }
@@ -396,32 +396,32 @@ class MainActivity : Activity() {
         background = rounded(0, 9, 1, Pal.LINE)
         setPadding(dp(14), dp(10), dp(10), dp(10))
         val text = LinearLayout(this@MainActivity).apply { orientation = LinearLayout.VERTICAL }
-        text.addView(label("+  Mehr Spiele", 14f, Pal.TEXT, true))
-        text.addView(label("Frag Claude Code oder Codex – Prompt kopieren, Spielnamen eintragen.", 12f, Pal.MUTED))
+        text.addView(label("+  More games", 14f, Pal.TEXT, true))
+        text.addView(label("Ask Claude Code or Codex – copy the prompt, fill in the game name.", 12f, Pal.MUTED))
         addView(text, lp(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-        addView(label("Prompt\nkopieren", 12f, Pal.TEXT, true).apply {
+        addView(label("Copy\nprompt", 12f, Pal.TEXT, true).apply {
             gravity = Gravity.CENTER
             background = rounded(Pal.INPUT, 8, 1, Pal.ACCENT_DIM)
             setPadding(dp(12), dp(6), dp(12), dp(6))
             setOnClickListener {
                 val cm = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                cm.setPrimaryClip(android.content.ClipData.newPlainText("JevPilot-Spiele-Prompt", adapterPrompt()))
-                toast("Prompt kopiert – in Claude Code oder Codex einfügen und den Spielnamen eintragen.")
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("JevPilot game prompt", adapterPrompt()))
+                toast("Prompt copied – paste it into Claude Code or Codex and fill in the game name.")
             }
         }, lp(ViewGroup.LayoutParams.WRAP_CONTENT).apply { marginStart = dp(10) })
     }
 
-    private fun adapterPrompt() = """Ich nutze JevPilot ($REPO_URL) und will ein neues Spiel.
-Bau mir einen Spiel-Adapter für: <SPIELNAME HIER EINTRAGEN>
+    private fun adapterPrompt() = """I use JevPilot ($REPO_URL) and want a new game.
+Build me a game adapter for: <PUT THE GAME NAME HERE>
 
-So funktioniert JevPilot:
-- Adapter sind .py-Dateien im Ordner "games" neben JevPilot.exe (Standard: %LOCALAPPDATA%\Programs\JevPilot\games). Sie werden beim Start geladen, die Exe muss nicht neu gebaut werden.
-- Vorlagen im Repo: jevpilot/games.py (Klasse GameAdapter, Doku oben in der Datei) und games/rounds.py.
-- Jev (TypeSafe System One) sieht keine Bilder und schreibt keinen Text. Er beantwortet nur Choice (max. 255 Optionen), Score und Noul (ja/nein). Der Adapter muss den Spielzustand als Text/JSON liefern und jeden möglichen Zug als kurzen englischen Satz anbieten.
-- Hat das Spiel keinen lesbaren Zustand, bau eine Brücke: z. B. einen BepInEx-Mod wie ROUNDS-Bridge/JevBridge, eine Speicherdatei, eine Web-API oder Bildschirm-Auslese.
-- Leg ein breites Titelbild als games/<dateiname>.jpg dazu (wird in der Bibliothek rechts abgedunkelt).
+How JevPilot works:
+- Adapters are .py files in the "games" folder next to JevPilot.exe (default: %LOCALAPPDATA%\Programs\JevPilot\games). They are loaded at startup; the exe does not need to be rebuilt.
+- Templates in the repo: jevpilot/games.py (class GameAdapter, docs at the top of the file) and games/rounds.py.
+- Jev (TypeSafe System One) cannot see images and cannot write text. It only answers Choice (max. 255 options), Score and Noul (yes/no). The adapter must provide the game state as text/JSON and offer every possible move as a short English sentence.
+- If the game has no readable state, build a bridge: e.g. a BepInEx mod like ROUNDS-Bridge/JevBridge, a save file, a web API or screen reading.
+- Add a wide cover image as games/<file name>.jpg (the library darkens it towards the right).
 
-Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
+Test the adapter at the end and tell me how to start it in JevPilot."""
 
     companion object {
         /** Same link as REPO_URL in jevpilot/games.py on the PC. */
@@ -440,12 +440,12 @@ Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
     }
 
     private fun startPc(prompt: String, steps: Int, risky: Boolean) {
-        if (selectedGame == null && prompt.isEmpty()) return toast("Erst eine Aufgabe eingeben.")
+        if (selectedGame == null && prompt.isEmpty()) return toast("Type a task first.")
         val body = JSONObject().put("prompt", prompt).put("mode", mode).put("steps", steps)
             .put("risky", risky).put("game", selectedGame ?: JSONObject.NULL)
         thread {
             try { pc.json("POST", "/api/run", body); runOnUiThread { pcComposer.input.setText("") } }
-            catch (e: Exception) { runOnUiThread { toast(e.message ?: "Fehler") } }
+            catch (e: Exception) { runOnUiThread { toast(e.message ?: "Error") } }
         }
     }
 
@@ -464,8 +464,8 @@ Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
                     Thread.sleep(if (pcBusy) 500 else 1200)
                 } catch (e: Exception) {
                     failures++
-                    val msg = if (e is PcError && e.code == 401) "✗ Falscher Kopplungscode (⚙)"
-                    else "○ PC nicht erreichbar – JevPilot am PC offen? Gleiches WLAN oder USB?"
+                    val msg = if (e is PcError && e.code == 401) "✗ Wrong pairing code (⚙)"
+                    else "○ PC not reachable – is JevPilot open on the PC? Same Wi-Fi or USB?"
                     runOnUiThread { pcStatus.text = msg; pcStatus.setTextColor(if (failures > 1) Pal.RED else Pal.MUTED) }
                     Thread.sleep(2000)
                 }
@@ -476,7 +476,7 @@ Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
     private fun applyStatus(s: JSONObject) {
         val host = s.optString("pc")
         if (pcHostName != host) { pcHostName = host; if (pcNext == 0) pcLog.replaceAll(emptyList()) }
-        pcStatus.text = "● Verbunden mit $host" + if (pc.activeHost?.startsWith("127.") == true) " (USB)" else ""
+        pcStatus.text = "● Connected to $host" + if (pc.activeHost?.startsWith("127.") == true) " (USB)" else ""
         pcStatus.setTextColor(Pal.GREEN)
         val lines = s.optJSONArray("lines")
         if (lines != null && lines.length() > 0) pcLog.addAll((0 until lines.length()).map {
@@ -502,10 +502,10 @@ Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
             try { pc.json("POST", "/api/confirm", JSONObject().put("id", id).put("yes", yes)) } catch (_: Exception) {}
         }
         confirmDialog = AlertDialog.Builder(this, R.style.JevDialog)
-            .setTitle("✻ Am PC bestätigen")
+            .setTitle("✻ Confirm on the PC")
             .setMessage(text)
-            .setPositiveButton("Erlauben") { _, _ -> answer(true) }
-            .setNegativeButton("Ablehnen") { _, _ -> answer(false) }
+            .setPositiveButton("Allow") { _, _ -> answer(true) }
+            .setNegativeButton("Deny") { _, _ -> answer(false) }
             .setCancelable(false)
             .create().also { styleDialog(it); it.show() }
     }
@@ -534,19 +534,19 @@ Teste den Adapter am Ende und sag mir, wie ich ihn in JevPilot starte."""
                 isSingleLine = true
             }.also { box.addView(it) }
         }
-        val key = field("TypeSafe API-Key (für Handy steuern)", prefs.apiKey, true, "apikey_…")
-        val host = field("PC-Adresse", prefs.pcHost, false, "192.168.x.x:8765")
-        val token = field("Kopplungscode", prefs.pcToken, false, "steht am PC unter ⚙ Einstellungen")
-        box.addView(label("Über USB klappt es auch ohne WLAN (adb reverse). Alles bleibt nur auf diesem Handy gespeichert.",
+        val key = field("TypeSafe API key", prefs.apiKey, true, "apikey_…")
+        val host = field("PC address", prefs.pcHost, false, "192.168.x.x:8765")
+        val token = field("Pairing code", prefs.pcToken, false, "shown on the PC under ⚙ Settings")
+        box.addView(label("Over USB it also works without Wi-Fi (adb reverse). Everything stays on this phone.",
             12f, Pal.FAINT).apply { setPadding(0, dp(10), 0, dp(4)) })
         AlertDialog.Builder(this, R.style.JevDialog)
-            .setTitle("Einstellungen")
+            .setTitle("Settings")
             .setView(box)
-            .setPositiveButton("Speichern") { _, _ ->
+            .setPositiveButton("Save") { _, _ ->
                 prefs.apiKey = key.text.toString(); prefs.pcHost = host.text.toString(); prefs.pcToken = token.text.toString()
                 pc.activeHost = null; pcNext = 0; pcHostName = null
             }
-            .setNegativeButton("Abbrechen", null)
+            .setNegativeButton("Cancel", null)
             .create().also { styleDialog(it); it.show() }
     }
 

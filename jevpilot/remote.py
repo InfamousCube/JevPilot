@@ -101,7 +101,7 @@ class Remote:
 
             def do_GET(self):
                 if not self._authorized():
-                    return self._send(401, {"error": "Falscher Kopplungscode"})
+                    return self._send(401, {"error": "Wrong pairing code"})
                 url = urlparse(self.path)
                 q = {k: v[0] for k, v in parse_qs(url.query).items()}
                 if url.path == "/api/status":
@@ -116,7 +116,7 @@ class Remote:
 
             def do_POST(self):
                 if not self._authorized():
-                    return self._send(401, {"error": "Falscher Kopplungscode"})
+                    return self._send(401, {"error": "Wrong pairing code"})
                 n = int(self.headers.get("Content-Length", 0) or 0)
                 try:
                     body = json.loads(self.rfile.read(n) or b"{}")

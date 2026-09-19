@@ -1,7 +1,7 @@
 # Installs JevPilot for the current user (no admin needed):
 #   %LOCALAPPDATA%\Programs\JevPilot\JevPilot.exe + games\
 #   Start menu shortcut "JevPilot" -> findable in Windows search.
-# Run from the unzipped release folder: right-click -> "Mit PowerShell ausführen",
+# Run from the unzipped release folder: right-click -> "Run with PowerShell",
 # or: powershell -ExecutionPolicy Bypass -File install.ps1
 $ErrorActionPreference = "Stop"
 $src = $PSScriptRoot
@@ -20,7 +20,7 @@ $s = $shell.CreateShortcut($lnk)
 $s.TargetPath = "$target\JevPilot.exe"
 $s.WorkingDirectory = $target
 $s.IconLocation = "$target\JevPilot.exe,0"
-$s.Description = "Computer Use mit TypeSafe Jev"
+$s.Description = "Computer use with TypeSafe Jev"
 $s.Save()
-Write-Host "JevPilot installiert: $target"
-Write-Host "Im Startmenue / in der Windows-Suche: JevPilot"
+Write-Host "JevPilot installed: $target"
+Write-Host "Find it in the Start menu / Windows search: JevPilot"

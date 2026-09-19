@@ -106,7 +106,7 @@ class PcClient(private val prefs: Prefs) {
         listOfNotNull(activeHost, prefs.pcHost.takeIf { it.isNotBlank() }, "127.0.0.1:8765").distinct()
 
     fun request(method: String, path: String, body: JSONObject? = null): ByteArray {
-        var last: Exception = PcError("PC nicht erreichbar")
+        var last: Exception = PcError("PC not reachable")
         for (host in hosts()) {
             val h = if (host.contains(":")) host else "$host:8765"
             val conn = URL("http://$h$path").openConnection() as HttpURLConnection
@@ -133,7 +133,7 @@ class PcClient(private val prefs: Prefs) {
                 conn.disconnect()
             }
         }
-        throw PcError("PC nicht erreichbar (${last.message ?: "keine Verbindung"})")
+        throw PcError("PC not reachable (${last.message ?: "no connection"})")
     }
 
     fun json(method: String, path: String, body: JSONObject? = null) =
